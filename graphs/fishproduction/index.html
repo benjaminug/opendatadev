@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<title>Highstock Example</title>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script type="text/javascript">
+$(function() {
+    
+    var seriesOptions = [],
+		    seriesCounter = 0,
+    names = ['victoria', 'albert', 'kyoga', 'edge', 'wamala']; //, 'alnile', 'others'],
+    datas = [];
+
+    years = [1971,1972,1973,1974,1975,1976,1977,1978,1979,1980,1981,1982,1983,1984,1985,1986,1987,1988,1989,1990,1991,1992,1993,1994,1995,1996,1997,1998,1999,2000,2001,2002,2003,2004,2005,2006,2007,2008,2009,2010];
+
+    datas[0] = [3810,3390,3250,2450,1690,1110,1570,1420,1200,1000,1700,1300,1700,4480,5460,5680,9320,10710,13240,11994,11804,12040,11150,10304,10300,10600,10600,10520,10420,13340,13180,13611,17530,25325,25325,21593,23056,21950,22130,22040];
+    datas[1] = [950,1050,1300,1350,1870,1230,2060,2060,1700,1300,600,1000,600,600,230,490,890,1250,1390,1948,2053,1870,1755,1640,1600,2200,1900,1910,2906,1938,1960,1938,1946,5644,5644,5644,5650,5650,5650,5600];
+    datas[2] = [8970,9510,10050,10500,10420,14580,16700,16700,13300,13100,13000,13800,13800,13700,10270,12800,5770,8675,5471,9492,5845,6300,7150,8020,9000,8100,8000,8020,8112,5589,5842,5558,3289,6845,6845,6000,6000,6000,6000,6000];
+    datas[3] = [1170,1230,1100,1050,1320,1250,1200,1180,960,700,500,690,600,650,600,630,620,590,560,550,1093,1060,1070,1080,900,500,600,560,743,522,640,522,586,960,960,880,800,880,880,880];
+    datas[4] = [,520,410,430,650,630,430,110,180,200,100,380,50,50,50,30,50,50,40,110,"..","..","..","..","..","..","..","..","..","..",561,450,560,"..",640,640,600,600,600,600,600];
+    datas[5] = ["..","..",420,430,420,400,710,450,180,570,450,320,300,100,400,390,180,220,110,60,190,141,528,880,680,480,500,40,340,350,350,"..","..","..","..",503,503,500,500,500,500,500];
+    datas[6] = [390,400,400,350,680,210,130,110,180,70,300,60,60,50,340,420,24,100,400,397,634,260,630,370,400,400,400,350,420,"..","..","..",827,3558,1758,1500,1800,1500,1500,1500];
+
+    $.each(names, function(i, name) 
+    {
+        datas[i] = addTimestamp(datas[i]);
+	    seriesOptions[i] = {
+	        type: 'column',
+            name: name,
+            data: datas[i],
+            dataGrouping: {
+			    units: [[
+				        'year', // unit name
+				        null // allowed multiples
+			        ]
+			    ]
+            }
+	    };
+
+	    // As we're loading the data asynchronously, we don't know what order it will arrive. So
+	    // we keep a counter and create the chart when all the data is loaded.
+	    seriesCounter++;
+
+	    if (seriesCounter == names.length) {
+		    createChart();
+	    }
+    });
+			
+    function addTimestamp(data) {
+        //console.log(data);
+        $.each(data, function(k, v) {
+               // console.log(j + " " + v);
+                //console.log("asd " + datas[7][j]);
+                timestamp = toTimestampYear(years[k]);//, '12', '28', '23', '59', '59');
+                data[k] = [timestamp, v];
+       });
+       return data;
+    }
+
+    // create the chart
+    function createChart() 
+    {
+	    chart = new Highcharts.StockChart({
+	        chart: {
+	            renderTo: 'container',
+	            alignTicks: false,
+	            zoomType: ''
+	        },
+	        
+	        rangeSelector: {
+		        buttons: [{
+		             type: 'year',
+		            count: 20,
+		            text: '20y'
+		        },{
+		            type: 'all',
+		            text: 'All'
+		        }],
+		        selected: 1
+		    },
+
+	        title: {
+	            text: 'Fishproduction'
+	        },
+
+	        series: seriesOptions
+	    });
+    }
+
+    function toTimestamp(year,month,day,hour,minute,second){
+        var datum = new Date(Date.UTC(year,month-1,day,hour,minute,second));
+        //console.log(datum);
+
+        return datum.getTime();
+    }
+    
+    function toTimestampYear(year){
+        //var datum = new Date(Date.UTC(year));
+        //console.log(datum);
+
+        return Date.UTC(year, 1, 1);
+    }
+    
+    $("#go").click(function(){
+      $("#block").animate({
+        width: "70%",
+        opacity: 0.4,
+        marginLeft: "0.6in",
+        fontSize: "3em",
+        borderWidth: "10px"
+      }, 1500 );
+    });
+}); 
+		</script>
+	</head>
+	<body>
+<script src="http://code.highcharts.com/stock/highstock.js"></script>
+<script src="http://code.highcharts.com/stock/modules/exporting.js"></script>
+
+<div id="container" style="height: 500px"></div>
+	</body>
+</html>
