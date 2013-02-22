@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OGR2Layers</title>
+<style>
+ #map{width:800px;height:600px;}
+</style>
+<script src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript">
+function urlCheck(str) {
+	var v = new RegExp();
+	v.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\.[A-Za-z0-9-_%&\?\/.=]+$");
+	if (!v.test(str)) {
+		return "<i>"+str+"</i>";
+	}
+		return "<a href="+str+" target:'_blank'>open url</a>";
+};
+var map, selectsControls
+function init(){
+	map = new OpenLayers.Map('map');
+	olmapnik = new OpenLayers.Layer.OSM("OpenStreetMap Mapnik", "http://tile.openstreetmap.org/${z}/${x}/${y}.png");
+	map.addLayer(olmapnik);
+	map.setBaseLayer(olmapnik);
+	var ls= new OpenLayers.Control.LayerSwitcher(); 
+	map.addControl(ls); 
+	ls.maximizeControl(); 
+	map.addControl(new OpenLayers.Control.Navigation());
+	var Uganda_districts2010_template = { 
+		strokeColor: "rgb(0,0,0)",
+		strokeOpacity: 1.0,
+		strokeWidth: 0.26,
+		fillColor: "rgb(143,96,110)",
+		fillOpacity: 1.0
+	}
+	var Uganda_districts2010_style = new OpenLayers.Style(Uganda_districts2010_template)
+	//START QUERY Uganda_districts2010
+	function onPopupCloseUganda_districts2010(evt) {
+		selectControl.unselect(selectedFeature);
+	}
+	function onFeatureSelectUganda_districts2010(feature){
+		selectedFeature = feature;
+		tableUganda_districts2010="<html><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><body><table><tr><td><b>D_06_ID:</b></td><td>"+urlCheck(feature.attributes.D_06_ID)+"</td></tr><tr><td><b>DNAME_2006:</b></td><td>"+urlCheck(feature.attributes.DNAME_2006)+"</td></tr><tr><td><b>AREA:</b></td><td>"+urlCheck(feature.attributes.AREA)+"</td></tr><tr><td><b>PERIMETER:</b></td><td>"+urlCheck(feature.attributes.PERIMETER)+"</td></tr><tr><td><b>HECTARES:</b></td><td>"+urlCheck(feature.attributes.HECTARES)+"</td></tr><tr><td><b>DNAME_2010:</b></td><td>"+urlCheck(feature.attributes.DNAME_2010)+"</td></tr><tr><td><b>SUBREGION:</b></td><td>"+urlCheck(feature.attributes.SUBREGION)+"</td></tr><tr><td><b>COUNTRY:</b></td><td>"+urlCheck(feature.attributes.COUNTRY)+"</td></tr><tr><td><b>PRIMARYIND:</b></td><td>"+urlCheck(feature.attributes.PRIMARYIND)+"</td></tr><tr><td><b>strat_coun:</b></td><td>"+urlCheck(feature.attributes.strat_coun)+"</td></tr></table></body></html>"; 
+		popup = new OpenLayers.Popup.FramedCloud("chicken", 
+			feature.geometry.getBounds().getCenterLonLat(),
+			new OpenLayers.Size(1000,500),
+			tableUganda_districts2010,
+			null,
+			true,
+			onPopupCloseUganda_districts2010
+		); 
+		feature.popup = popup;
+		map.addPopup(popup);
+	}
+	function onFeatureUnselectUganda_districts2010(feature) {
+		map.removePopup(feature.popup);
+		feature.popup.destroy();
+		feature.popup = null;
+	}
+	//STOP QUERY Uganda_districts2010
+	var Uganda_districts2010 = new OpenLayers.Layer.GML("Uganda_districts2010 GeoJSON", "Uganda_districts2010.GeoJSON", {format: OpenLayers.Format.GeoJSON, styleMap: Uganda_districts2010_style});
+	map.addLayer(Uganda_districts2010);
+	selectControl = new OpenLayers.Control.SelectFeature(
+		[Uganda_districts2010, ],
+		{
+			clickout: true, toggle: false, 
+			multiple: false, hover: false, 
+			toggleKey: "ctrlKey", // ctrl key removes from selection
+			multipleKey: "shiftKey" // shift key adds to selection
+		}
+	);
+	map.addControl(selectControl);
+	selectControl.activate();
+	Uganda_districts2010.events.on({
+		"featureselected": function(e) {
+			onFeatureSelectUganda_districts2010(e.feature);
+		},
+		"featureunselected": function(e) {
+			onFeatureUnselectUganda_districts2010(e.feature);
+		}
+	});
+	extent = new OpenLayers.Bounds(27.963272,-1.621615,36.609778,4.376898).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+	map.zoomToExtent(extent);
+};
+</script>
+</head>
+<body onload="init()">
+<h1></h1>
+<div id="map"></div>
+</body>
+</html>
