@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<datasets>
+    <dataset id="quantity-fish-produced-ugandan-lakes-1961-2010">
+        <url>data/fishproduction.csv</url>
+        <chart>
+            <title>Fishproduction in Uganda</title>
+            <subtitle>Src: http://www.opendev.ug/resources/quantity-fish-produced-ugandan-lakes-1961-2010</subtitle>
+        </chart>
+    </dataset>
+</datasets>
