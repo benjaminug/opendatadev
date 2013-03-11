@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OGR2Layers</title>
+<style>
+ #map{width:800px;height:600px;}
+</style>
+<script src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript">
+var map, selectsControls
+function init(){
+	var option = {
+		projection: new OpenLayers.Projection("EPSG:900913"),
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+	};
+	map = new OpenLayers.Map('map', option);
+	olmapnik = new OpenLayers.Layer.OSM("OpenStreetMap Mapnik", "http://tile.openstreetmap.org/${z}/${x}/${y}.png");
+	map.addLayer(olmapnik);
+	map.setBaseLayer(olmapnik);
+	var ls= new OpenLayers.Control.LayerSwitcher(); 
+	map.addControl(ls); 
+	ls.maximizeControl(); 
+	map.addControl(new OpenLayers.Control.Permalink());
+	map.addControl(new OpenLayers.Control.Attribution());
+	map.addControl(new OpenLayers.Control.Navigation());
+	var latrinescoverage2011_style = new OpenLayers.Style({
+		fillOpacity: 1,
+		strokeOpacity: 1
+	},{
+		rules: [
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 0.0,
+					upperBoundary: 0.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(220,220,220)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 1.0,
+					upperBoundary: 20.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(254,229,217)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 20.0,
+					upperBoundary: 40.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(252,174,145)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 40.0,
+					upperBoundary: 60.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(251,106,74)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 60.0,
+					upperBoundary: 80.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(222,45,38)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2006/07",
+					lowerBoundary: 80.0,
+					upperBoundary: 98.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(165,15,21)",
+					strokeWidth: 0.26
+				}
+			})
+		]
+	});
+var latrinescoverage2011 = new OpenLayers.Layer.GML("latrinescoverage2011 GeoJSON", "latrinescoverage2011.GeoJSON", {format: OpenLayers.Format.GeoJSON, styleMap: latrinescoverage2011_style});
+	map.addLayer(latrinescoverage2011);
+	extent = new OpenLayers.Bounds(27.863443,-1.376651,37.140776,3.96561).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+	map.zoomToExtent(extent);
+};
+</script>
+</head>
+<body onload="init()">
+<h1>Latrines coverage in 2011</h1>
+<div id="map"></div>
+</body>
+</html>
