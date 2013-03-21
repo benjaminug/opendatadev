@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OGR2Layers</title>
+<style>
+ #map{width:100%;height:1024px;}
+</style>
+<script src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript">
+function urlCheck(str) {
+	var v = new RegExp();
+	v.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\.[A-Za-z0-9-_%&\?\/.=]+$");
+	if (!v.test(str)) {
+		return "<i>"+str+"</i>";
+	}
+		return "<a href="+str+" target:'_blank'>open url</a>";
+};
+var map, selectsControls
+function init(){
+	var option = {
+		projection: new OpenLayers.Projection("EPSG:900913"),
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+	};
+	map = new OpenLayers.Map('map', option);
+	olmapnik = new OpenLayers.Layer.OSM("OpenStreetMap Mapnik", "http://tile.openstreetmap.org/${z}/${x}/${y}.png");
+	map.addLayer(olmapnik);
+	map.setBaseLayer(olmapnik);
+	var ls= new OpenLayers.Control.LayerSwitcher(); 
+	map.addControl(ls); 
+	ls.maximizeControl(); 
+	map.addControl(new OpenLayers.Control.Navigation());
+	var latrinedistribution:2011_style = new OpenLayers.Style({
+		fillOpacity: 1,
+		strokeOpacity: 1
+	},{
+		rules: [
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 0.0,
+					upperBoundary: 0.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(187,187,187)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 1.0,
+					upperBoundary: 20.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(255,242,153)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 20.0,
+					upperBoundary: 40.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(213,197,122)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 40.0,
+					upperBoundary: 60.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(171,153,91)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 60.0,
+					upperBoundary: 80.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(129,108,60)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "2010/11",
+					lowerBoundary: 80.0,
+					upperBoundary: 97.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(87,64,30)",
+					strokeWidth: 0.26
+				}
+			})
+		]
+	});
+//START QUERY latrinedistribution:2011
+	function onPopupCloselatrinedistribution:2011(evt) {
+		selectControl.unselect(selectedFeature);
+	}
+	function onFeatureSelectlatrinedistribution:2011(feature){
+		selectedFeature = feature;
+		tablelatrinedistribution:2011="<html><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><body><table><tr><td><b>D_06_ID:</b></td><td>"+urlCheck(feature.attributes.D_06_ID)+"</td></tr><tr><td><b>DNAME_2006:</b></td><td>"+urlCheck(feature.attributes.DNAME_2006)+"</td></tr><tr><td><b>AREA:</b></td><td>"+urlCheck(feature.attributes.AREA)+"</td></tr><tr><td><b>PERIMETER:</b></td><td>"+urlCheck(feature.attributes.PERIMETER)+"</td></tr><tr><td><b>HECTARES:</b></td><td>"+urlCheck(feature.attributes.HECTARES)+"</td></tr><tr><td><b>DNAME_2010:</b></td><td>"+urlCheck(feature.attributes.DNAME_2010)+"</td></tr><tr><td><b>SUBREGION:</b></td><td>"+urlCheck(feature.attributes.SUBREGION)+"</td></tr><tr><td><b>COUNTRY:</b></td><td>"+urlCheck(feature.attributes.COUNTRY)+"</td></tr><tr><td><b>2006/07:</b></td><td>"+urlCheck(feature.attributes.2006/07)+"</td></tr><tr><td><b>2007/08:</b></td><td>"+urlCheck(feature.attributes.2007/08)+"</td></tr><tr><td><b>2008/09:</b></td><td>"+urlCheck(feature.attributes.2008/09)+"</td></tr><tr><td><b>2009/10:</b></td><td>"+urlCheck(feature.attributes.2009/10)+"</td></tr><tr><td><b>2010/11:</b></td><td>"+urlCheck(feature.attributes.2010/11)+"</td></tr></table></body></html>"; 
+		popup = new OpenLayers.Popup.FramedCloud("chicken", 
+			feature.geometry.getBounds().getCenterLonLat(),
+			new OpenLayers.Size(1000,500),
+			tablelatrinedistribution:2011,
+			null,
+			true,
+			onPopupCloselatrinedistribution:2011
+		); 
+		feature.popup = popup;
+		map.addPopup(popup);
+	}
+	function onFeatureUnselectlatrinedistribution:2011(feature) {
+		map.removePopup(feature.popup);
+		feature.popup.destroy();
+		feature.popup = null;
+	}
+	//STOP QUERY latrinedistribution:2011
+	var latrinedistribution:2011 = new OpenLayers.Layer.GML("latrinedistribution:2011 GeoJSON", "latrinedistribution:2011.GeoJSON", {format: OpenLayers.Format.GeoJSON, styleMap: latrinedistribution:2011_style});
+	map.addLayer(latrinedistribution:2011);
+	selectControl = new OpenLayers.Control.SelectFeature(
+		[latrinedistribution:2011, ],
+		{
+			clickout: true, toggle: false, 
+			multiple: false, hover: false, 
+			toggleKey: "ctrlKey", // ctrl key removes from selection
+			multipleKey: "shiftKey" // shift key adds to selection
+		}
+	);
+	map.addControl(selectControl);
+	selectControl.activate();
+	latrinedistribution:2011.events.on({
+		"featureselected": function(e) {
+			onFeatureSelectlatrinedistribution:2011(e.feature);
+		},
+		"featureunselected": function(e) {
+			onFeatureUnselectlatrinedistribution:2011(e.feature);
+		}
+	});
+	extent = new OpenLayers.Bounds(27.920099,-1.689292,38.810145,4.709493).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+	map.zoomToExtent(extent);
+};
+</script>
+</head>
+<body onload="init()">
+<h1>Latrine distribution by percentage in 2012</h1>
+<div id="map"></div>
+</body>
+</html>
