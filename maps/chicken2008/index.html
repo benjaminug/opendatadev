@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OGR2Layers</title>
+<style>
+ #map{width:800px;height:600px;}
+</style>
+<script src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript">
+function urlCheck(str) {
+	var v = new RegExp();
+	v.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\.[A-Za-z0-9-_%&\?\/.=]+$");
+	if (!v.test(str)) {
+		return "<i>"+str+"</i>";
+	}
+		return "<a href="+str+" target:'_blank'>open url</a>";
+};
+var map, selectsControls
+function init(){
+	var option = {
+		projection: new OpenLayers.Projection("EPSG:900913"),
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+	};
+	map = new OpenLayers.Map('map', option);
+	olmapnik = new OpenLayers.Layer.OSM("OpenStreetMap Mapnik", "http://tile.openstreetmap.org/${z}/${x}/${y}.png");
+	map.addLayer(olmapnik);
+	map.setBaseLayer(olmapnik);
+	var ls= new OpenLayers.Control.LayerSwitcher(); 
+	map.addControl(ls); 
+	ls.maximizeControl(); 
+	map.addControl(new OpenLayers.Control.Navigation());
+	var chicken2008_style = new OpenLayers.Style({
+		fillOpacity: 1,
+		strokeOpacity: 1
+	},{
+		rules: [
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "Chicken",
+					lowerBoundary: 0.0,
+					upperBoundary: 0.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(195,195,195)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "Chicken",
+					lowerBoundary: 1.0,
+					upperBoundary: 500000.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(255,255,212)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "Chicken",
+					lowerBoundary: 500000.0,
+					upperBoundary: 1000000.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(254,195,108)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "Chicken",
+					lowerBoundary: 1000000.0,
+					upperBoundary: 1500000.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(229,114,23)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "Chicken",
+					lowerBoundary: 1500000.0,
+					upperBoundary: 1551702.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(153,52,4)",
+					strokeWidth: 0.26
+				}
+			})
+		]
+	});
+//START QUERY chicken2008
+	function onPopupClosechicken2008(evt) {
+		selectControl.unselect(selectedFeature);
+	}
+	function onFeatureSelectchicken2008(feature){
+		selectedFeature = feature;
+		tablechicken2008="<html><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><body><table><tr><td><b>D_06_ID:</b></td><td>"+urlCheck(feature.attributes.D_06_ID)+"</td></tr><tr><td><b>DNAME_2006:</b></td><td>"+urlCheck(feature.attributes.DNAME_2006)+"</td></tr><tr><td><b>SUBREGION:</b></td><td>"+urlCheck(feature.attributes.SUBREGION)+"</td></tr><tr><td><b>COUNTRY:</b></td><td>"+urlCheck(feature.attributes.COUNTRY)+"</td></tr><tr><td><b>Cattle:</b></td><td>"+urlCheck(feature.attributes.Cattle)+"</td></tr><tr><td><b>Goats:</b></td><td>"+urlCheck(feature.attributes.Goats)+"</td></tr><tr><td><b>Sheep:</b></td><td>"+urlCheck(feature.attributes.Sheep)+"</td></tr><tr><td><b>Pigs:</b></td><td>"+urlCheck(feature.attributes.Pigs)+"</td></tr><tr><td><b>Chicken:</b></td><td>"+urlCheck(feature.attributes.Chicken)+"</td></tr><tr><td><b>Turkey:</b></td><td>"+urlCheck(feature.attributes.Turkey)+"</td></tr><tr><td><b>Ducks:</b></td><td>"+urlCheck(feature.attributes.Ducks)+"</td></tr></table></body></html>"; 
+		popup = new OpenLayers.Popup.FramedCloud("chicken", 
+			feature.geometry.getBounds().getCenterLonLat(),
+			new OpenLayers.Size(1000,500),
+			tablechicken2008,
+			null,
+			true,
+			onPopupClosechicken2008
+		); 
+		feature.popup = popup;
+		map.addPopup(popup);
+	}
+	function onFeatureUnselectchicken2008(feature) {
+		map.removePopup(feature.popup);
+		feature.popup.destroy();
+		feature.popup = null;
+	}
+	//STOP QUERY chicken2008
+	var chicken2008 = new OpenLayers.Layer.GML("chicken2008 GeoJSON", "chicken2008.GeoJSON", {format: OpenLayers.Format.GeoJSON, styleMap: chicken2008_style});
+	map.addLayer(chicken2008);
+	selectControl = new OpenLayers.Control.SelectFeature(
+		[chicken2008, ],
+		{
+			clickout: true, toggle: false, 
+			multiple: false, hover: false, 
+			toggleKey: "ctrlKey", // ctrl key removes from selection
+			multipleKey: "shiftKey" // shift key adds to selection
+		}
+	);
+	map.addControl(selectControl);
+	selectControl.activate();
+	chicken2008.events.on({
+		"featureselected": function(e) {
+			onFeatureSelectchicken2008(e.feature);
+		},
+		"featureunselected": function(e) {
+			onFeatureUnselectchicken2008(e.feature);
+		}
+	});
+	extent = new OpenLayers.Bounds(28.073091,-1.920364,36.423721,4.815386).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+	map.zoomToExtent(extent);
+};
+</script>
+</head>
+<body onload="init()">
+<h1>Chicken numbers by district in 2008</h1>
+<div id="map"></div>
+</body>
+</html>
