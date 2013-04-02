@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>OGR2Layers</title>
+<style>
+ #map{width:800px;height:600px;}
+</style>
+<script src="http://www.openlayers.org/api/2.11/OpenLayers.js"></script>
+<script type="text/javascript">
+function urlCheck(str) {
+	var v = new RegExp();
+	v.compile("^[A-Za-z]+://[A-Za-z0-9-_]+\.[A-Za-z0-9-_%&\?\/.=]+$");
+	if (!v.test(str)) {
+		return "<i>"+str+"</i>";
+	}
+		return "<a href="+str+" target:'_blank'>open url</a>";
+};
+var map, selectsControls
+function init(){
+	var option = {
+		projection: new OpenLayers.Projection("EPSG:900913"),
+		displayProjection: new OpenLayers.Projection("EPSG:4326")
+	};
+	map = new OpenLayers.Map('map', option);
+	olmapnik = new OpenLayers.Layer.OSM("OpenStreetMap Mapnik", "http://tile.openstreetmap.org/${z}/${x}/${y}.png");
+	map.addLayer(olmapnik);
+	map.setBaseLayer(olmapnik);
+	var ls= new OpenLayers.Control.LayerSwitcher(); 
+	map.addControl(ls); 
+	ls.maximizeControl(); 
+	map.addControl(new OpenLayers.Control.Navigation());
+	var ChangeInhealthUnitNo_style = new OpenLayers.Style({
+		fillOpacity: 1,
+		strokeOpacity: 1
+	},{
+		rules: [
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: 0.0,
+					upperBoundary: 0.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(255,255,191)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: -3.0,
+					upperBoundary: -1.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(255,213,0)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: 1.0,
+					upperBoundary: 20.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(188,188,188)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: 20.0,
+					upperBoundary: 40.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(127,127,127)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: 40.0,
+					upperBoundary: 60.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(66,66,66)",
+					strokeWidth: 0.26
+				}
+			}),
+			new OpenLayers.Rule({
+				filter: new OpenLayers.Filter.Comparison({
+					type: OpenLayers.Filter.Comparison.BETWEEN,
+					property: "change",
+					lowerBoundary: 60.0,
+					upperBoundary: 66.0
+				}),
+				symbolizer: {
+					strokeColor: "rgb(0,0,0)",
+					fillColor: "rgb(5,5,5)",
+					strokeWidth: 0.26
+				}
+			})
+		]
+	});
+//START QUERY ChangeInhealthUnitNo
+	function onPopupCloseChangeInhealthUnitNo(evt) {
+		selectControl.unselect(selectedFeature);
+	}
+	function onFeatureSelectChangeInhealthUnitNo(feature){
+		selectedFeature = feature;
+		tableChangeInhealthUnitNo="<html><meta http-equiv='Content-Type' content='text/html; charset=UTF-8'><body><table><tr><td><b>DNAME_2010:</b></td><td>"+urlCheck(feature.attributes.DNAME_2010)+"</td></tr><tr><td><b>hunits2007:</b></td><td>"+urlCheck(feature.attributes.hunits2007)+"</td></tr><tr><td><b>hunits2009:</b></td><td>"+urlCheck(feature.attributes.hunits2009)+"</td></tr><tr><td><b>hunits2010:</b></td><td>"+urlCheck(feature.attributes.hunits2010)+"</td></tr><tr><td><b>change:</b></td><td>"+urlCheck(feature.attributes.change)+"</td></tr></table></body></html>"; 
+		popup = new OpenLayers.Popup.FramedCloud("chicken", 
+			feature.geometry.getBounds().getCenterLonLat(),
+			new OpenLayers.Size(1000,500),
+			tableChangeInhealthUnitNo,
+			null,
+			true,
+			onPopupCloseChangeInhealthUnitNo
+		); 
+		feature.popup = popup;
+		map.addPopup(popup);
+	}
+	function onFeatureUnselectChangeInhealthUnitNo(feature) {
+		map.removePopup(feature.popup);
+		feature.popup.destroy();
+		feature.popup = null;
+	}
+	//STOP QUERY ChangeInhealthUnitNo
+	var ChangeInhealthUnitNo = new OpenLayers.Layer.GML("ChangeInhealthUnitNo GeoJSON", "ChangeInhealthUnitNo.GeoJSON", {format: OpenLayers.Format.GeoJSON, styleMap: ChangeInhealthUnitNo_style});
+	map.addLayer(ChangeInhealthUnitNo);
+	selectControl = new OpenLayers.Control.SelectFeature(
+		[ChangeInhealthUnitNo, ],
+		{
+			clickout: true, toggle: false, 
+			multiple: false, hover: false, 
+			toggleKey: "ctrlKey", // ctrl key removes from selection
+			multipleKey: "shiftKey" // shift key adds to selection
+		}
+	);
+	map.addControl(selectControl);
+	selectControl.activate();
+	ChangeInhealthUnitNo.events.on({
+		"featureselected": function(e) {
+			onFeatureSelectChangeInhealthUnitNo(e.feature);
+		},
+		"featureunselected": function(e) {
+			onFeatureUnselectChangeInhealthUnitNo(e.feature);
+		}
+	});
+	extent = new OpenLayers.Bounds(28.568204,-1.621615,36.004847,4.376898).transform(new OpenLayers.Projection("EPSG:4326"), new OpenLayers.Projection("EPSG:900913"));
+	map.zoomToExtent(extent);
+};
+</script>
+</head>
+<body onload="init()">
+<h1>Change in number of health centres between 2007-2010</h1>
+<div id="map"></div>
+</body>
+</html>
